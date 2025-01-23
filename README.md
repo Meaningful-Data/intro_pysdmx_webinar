@@ -1,2 +1,2 @@
-# intro_pysdmx_webinar
+# Webinar: Introduction to pysdmx
 Jupyter Notebook and files for pysdmx webinar

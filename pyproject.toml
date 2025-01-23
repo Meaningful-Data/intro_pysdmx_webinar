@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "intro-pysdmx-webinar"
+version = "0.1.0"
+description = ""
+authors = ["Javier Hernandez <javier.hernandez@meaningfuldata.eu>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+pysdmx = "^1.0.0"
+vtlengine = "^1.0"
+jupyter = "^1.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

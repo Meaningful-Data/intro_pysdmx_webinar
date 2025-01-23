@@ -1,0 +1,39 @@
+define datapoint ruleset  subcategories (variable CATEGORY, SUBCATEGORY) is
+    c1: when CATEGORY = "RESIDENT_GOVERNMENT_ENTITY" then not isnull(SUBCATEGORY) errorcode "C1" errorlevel 1;
+    c2: when CATEGORY <> "RESIDENT_GOVERNMENT_ENTITY" then isnull(SUBCATEGORY) errorcode "C2" errorlevel 1
+end datapoint ruleset;
+define datapoint ruleset  postal_codes (variable COUNTRY_INCORPORATION, POSTAL_CODE) is
+    pc1: when COUNTRY_INCORPORATION = "AD" then match_characters(POSTAL_CODE,"^(AD\d{3})$") errorcode "pc1" errorlevel 3;
+    pc2: when COUNTRY_INCORPORATION = "AF" then match_characters(POSTAL_CODE,"^\d{4}$|^((([1-3][0-9])|(4[0-3]))\d{4})$") errorcode "pc2" errorlevel 3;
+    pc3: when COUNTRY_INCORPORATION = "AI" then match_characters(POSTAL_CODE,"^AI-2640$") errorcode "pc3" errorlevel 3;
+    pc4: when COUNTRY_INCORPORATION = "AL" then match_characters(POSTAL_CODE,"^\d{4}$") errorcode "pc4" errorlevel 3;
+    pc5: when COUNTRY_INCORPORATION = "AM" then match_characters(POSTAL_CODE,"(\d{4})|(\d{6})") errorcode "pc5" errorlevel 3;
+    pc6: when COUNTRY_INCORPORATION = "AR" then match_characters(POSTAL_CODE,"^(([A-Z]\d{4}[A-Z]{3})|([A-Z]\d{4}))$") errorcode "pc6" errorlevel 3;
+    pc7: when COUNTRY_INCORPORATION = "AS" then match_characters(POSTAL_CODE,"^(96799(-\d{4})?)$") errorcode "pc7" errorlevel 3;
+    pc8: when COUNTRY_INCORPORATION = "AT" then match_characters(POSTAL_CODE,"^\d{4}$") errorcode "pc8" errorlevel 3;
+    pc9: when COUNTRY_INCORPORATION = "AU" then match_characters(POSTAL_CODE,"^\d{4}$") errorcode "pc9" errorlevel 3;
+    pc10: when COUNTRY_INCORPORATION = "AZ" then match_characters(POSTAL_CODE,"^((AZ)(\d{4})|(AZ )(\d{4}))$") errorcode "pc10" errorlevel 3;
+    pc11: when COUNTRY_INCORPORATION = "BA" then match_characters(POSTAL_CODE,"^\d{5}$") errorcode "pc11" errorlevel 3
+end datapoint ruleset;
+/*******************************************************************************
+*       Module validation
+*******************************************************************************/
+validation.postal_codes_errors :=
+	check_datapoint(
+		LEI_DATA,
+		postal_codes);
+
+validation.subcategories_errors :=
+	check_datapoint(
+		LEI_DATA,
+		subcategories);
+
+validation_results <-
+	 union(validation.postal_codes_errors,validation.subcategories_errors);
+
+errors_count <-
+	 count(
+			validation_results
+				[calc identifier 'errorlevel' := nvl('errorlevel',0)] 
+			group by 'errorlevel'
+		);
