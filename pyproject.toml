@@ -5,7 +5,7 @@ authors = ["Javier Hernandez <javier.hernandez@meaningfuldata.eu>"]
 description = "Introduction to PySDMX webinar"
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = "^3.10"
 pysdmx = {version = "^1.0.0", extras = ["all"]}
 vtlengine = "^1.0"
 jupyter = "^1.0"
