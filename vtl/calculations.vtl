@@ -1,0 +1,47 @@
+/*******************************************************************************
+*       Module calculation
+*******************************************************************************/
+calculation.country_dimension :=
+	LEI_DATA
+		[calc identifier COUNTRY_INCORPORATION := nvl(COUNTRY_INCORPORATION,""),
+			identifier COUNTRY_HEADQUARTERS := nvl(COUNTRY_HEADQUARTERS,"")
+		][keep CATEGORY];
+
+// Calculate the number of entities incorporated in the country
+calculation.number_incorporated_entities :=
+	count(
+			calculation.country_dimension # LEI
+			group by COUNTRY_INCORPORATION
+		)
+		[calc identifier MEASURE := "NUMBER_INCORPORATED_ENTITIES"]
+		[rename int_var to OBS_VALUE,
+				COUNTRY_INCORPORATION to COUNTRY
+		];
+
+// Calculate the number of entities with headquarters in the country
+calculation.number_hq_entities :=
+	count(
+			calculation.country_dimension # LEI
+			group by COUNTRY_HEADQUARTERS
+		)
+		[calc identifier MEASURE := "NUMBER_HQ_ENTITIES"]
+		[rename int_var to OBS_VALUE,
+				COUNTRY_HEADQUARTERS to COUNTRY
+		];
+
+// Calculate the number of entities with headquarters in a
+// different country than the incorporation
+calculation.number_entities_different_hq :=
+	count(
+			calculation.country_dimension
+				[filter COUNTRY_INCORPORATION <> COUNTRY_HEADQUARTERS]
+			group by COUNTRY_INCORPORATION
+		)
+		[calc identifier MEASURE := "NUMBER_ENTITIES_DIFF_HQ"]
+		[rename int_var to OBS_VALUE,
+				COUNTRY_INCORPORATION to COUNTRY
+		];
+
+// Join the results
+lei_statistics <-
+	 union(calculation.number_incorporated_entities,calculation.number_hq_entities,calculation.number_entities_different_hq);
