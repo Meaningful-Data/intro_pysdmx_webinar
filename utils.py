@@ -82,6 +82,10 @@ def streaming_load_save_csv_file(golden_copy_original_path, output_filename,
             with open(output_filename, "w", encoding="utf-8") as f:
                 f.write(out)
     print(f"Number of lines written: {number_of_lines_written}")
+    if use_sdmx_csv:
+        print("Written in SDMX-CSV 2.0")
+    else:
+        print("Written in CSV")
 
 
 VTL_DTYPES_MAPPING = {
