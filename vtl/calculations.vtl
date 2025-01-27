@@ -13,7 +13,7 @@ calculation.number_incorporated_entities :=
 			calculation.country_dimension # LEI
 			group by COUNTRY_INCORPORATION
 		)
-		[calc identifier MEASURE := "NUMBER_INCORPORATED_ENTITIES"]
+		[calc identifier TYPE_MEASURE := "NUMBER_INCORPORATED_ENTITIES"]
 		[rename int_var to OBS_VALUE,
 				COUNTRY_INCORPORATION to COUNTRY
 		];
@@ -24,7 +24,7 @@ calculation.number_hq_entities :=
 			calculation.country_dimension # LEI
 			group by COUNTRY_HEADQUARTERS
 		)
-		[calc identifier MEASURE := "NUMBER_HQ_ENTITIES"]
+		[calc identifier TYPE_MEASURE := "NUMBER_HQ_ENTITIES"]
 		[rename int_var to OBS_VALUE,
 				COUNTRY_HEADQUARTERS to COUNTRY
 		];
@@ -37,11 +37,10 @@ calculation.number_entities_different_hq :=
 				[filter COUNTRY_INCORPORATION <> COUNTRY_HEADQUARTERS]
 			group by COUNTRY_INCORPORATION
 		)
-		[calc identifier MEASURE := "NUMBER_ENTITIES_DIFF_HQ"]
+		[calc identifier TYPE_MEASURE := "NUMBER_ENTITIES_DIFF_HQ"]
 		[rename int_var to OBS_VALUE,
 				COUNTRY_INCORPORATION to COUNTRY
 		];
 
-// Join the results
 lei_statistics <-
 	 union(calculation.number_incorporated_entities,calculation.number_hq_entities,calculation.number_entities_different_hq);

@@ -9,6 +9,7 @@ from pysdmx.io.pd import PandasDataset
 from pysdmx.model import Component, Role
 from pysdmx.model.dataflow import DataStructureDefinition
 from requests import get, post
+from vtlengine import run
 
 # Original columns and their simple name for next steps of this tutorial
 
@@ -92,6 +93,7 @@ def streaming_load_save_csv_file(golden_copy_original_path, output_filename,
         print("Written in SDMX-CSV 2.0")
     else:
         print("Written in CSV")
+
 
 # ------------------------------
 # ----------- VTL --------------
@@ -192,6 +194,19 @@ def _load_script(filename):
         script = f.read()
     return script
 
+
+def run_vtl(script: str, dataset: PandasDataset):
+    # Load the dataset
+    dataset = PandasDataset(data=dataset.data, structure=dataset.structure)
+
+    # Generate datastructure from VTL
+    data_structure = to_vtl_json(dataset.structure)
+
+    # Run the VTL script
+    result = run(script, data_structures=data_structure, datapoints={"LEI_DATA": dataset.data})
+    return result
+
+
 # ------------------------------
 # ------------ FMR -------------
 # ------------------------------
@@ -204,6 +219,7 @@ STATUS_ERRORS = ['IncorrectDSD', 'InvalidRef', 'MissingDSD',
                  'Error']
 
 STATUS_COMPLETED = ["Complete"]
+
 
 def __handle_status(response_status):
     if response_status.json()['Status'] == 'Complete':
@@ -341,13 +357,13 @@ def get_validation_status(status_url: str,
 
 
 def validate_data_fmr(csv_text: str,
-                          host: str = 'localhost',
-                          port: int = 8080,
-                          use_https: bool = False,
-                          delimiter: str = 'comma',
-                          max_retries: int = 10,
-                          interval_time: float = 0.5
-                          ):
+                      host: str = 'localhost',
+                      port: int = 8080,
+                      use_https: bool = False,
+                      delimiter: str = 'comma',
+                      max_retries: int = 10,
+                      interval_time: float = 0.5
+                      ):
     """
     Validates an SDMX CSV file by uploading it to an FMR instance
     and checking its validation status
