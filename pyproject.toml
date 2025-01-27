@@ -9,3 +9,4 @@ python = "^3.11"
 pysdmx = {version = "^1.0.0", extras = ["all"]}
 vtlengine = "^1.0"
 jupyter = "^1.0"
+matplotlib = "^3.10.0"
