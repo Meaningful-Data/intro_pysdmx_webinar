@@ -169,3 +169,6 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+data_files/20250125-1600-gleif-goldencopy-lei2-golden-copy.csv
+data_files/golden_copy_changed.csv
